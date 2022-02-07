@@ -10,11 +10,11 @@ to-do:
 
 Entity component system ✓
 
-Animations
+Animations and other components
 
 System manager ✓
 
-Event system
+Event system ✓
 
 Game state system ✓
 
