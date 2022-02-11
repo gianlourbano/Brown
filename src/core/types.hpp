@@ -3,9 +3,9 @@
 #include <cstdint>
 
 // Source: https://gist.github.com/Lee-R/3839813
-constexpr std::uint32_t fnv1a_32(char const *s, std::size_t count)
+inline constexpr std::uint32_t fnv1a_32(char const *s, std::size_t count)
 {
-    return ((count ? fnv1a_32(s, count - 1) : 2166136261u) ^ s[count]) * 16777619u; // NOLINT (hicpp-signed-bitwise)
+    return count ? (fnv1a_32(s, count - 1) ^ s[count - 1]) * 16777619u : 2166136261u;
 }
 
 constexpr std::uint32_t operator"" _hash(char const *s, std::size_t count)

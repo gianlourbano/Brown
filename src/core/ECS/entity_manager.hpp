@@ -1,3 +1,4 @@
+#pragma once
 #include "../types.hpp"
 #include "../../debug/debugger.hpp"
 #include <array>

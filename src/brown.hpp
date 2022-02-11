@@ -1,13 +1,19 @@
 #pragma once
+
 #include <ncurses.h>
 #include <vector>
+#include <unistd.h>
 #include "debug/debugger.hpp"
+#include "core/color/color.hpp"
+#include "graphics/window/window.hpp"
 
 //////
 #include "core/event/event_manager.hpp"
 #include "core/ECS/entity_manager.hpp"
 #include "core/ECS/component_manager.hpp"
 #include "core/ECS/system_manager.hpp"
+#include "core/brain.hpp"
+//////
 
 namespace brown
 {

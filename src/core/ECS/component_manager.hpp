@@ -5,6 +5,7 @@
 #include <any>
 #include <memory>
 #include <unordered_map>
+#include "../../debug/debugger.hpp"
 
 namespace brown
 {

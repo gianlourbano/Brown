@@ -60,6 +60,10 @@ debug: clean all test
 static-linux: LDFLAGS += -static -static-libstdc++ -static-libgcc
 static-linux: info all
 
+static-lib: static-linux
+static-lib: ${CPP_OBJ_FILES}
+	ar -rvs libbrown.a ${CPP_OBJ_FILES} 
+
 info:
 	@echo
 	@echo "CXX = $(CXX)"

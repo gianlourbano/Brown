@@ -3,6 +3,11 @@
 
 namespace brown
 {
+    /*
+        state class for managing scenes basically.
+        the user needs to implement all the virtual functions
+        whenever he creates custom states.
+    */
     class state
     {
     public:
@@ -21,9 +26,13 @@ namespace brown
         WINDOW *get_win() { return win; }
         void set_win(WINDOW *win) { this->win = win; }
 
+        entity create_entity();
+
     protected:
         state(){};
         WINDOW *win;
+        brown::brain brain;
+        std::vector<entity> m_entities{};
     };
 
 }

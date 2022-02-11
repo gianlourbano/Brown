@@ -4,7 +4,7 @@
     Very simple implementation of a 2D vector,
     with basic operations overloaded.
 */
-class vec2
+struct vec2
 {
     int x, y;
 
