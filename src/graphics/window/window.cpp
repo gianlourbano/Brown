@@ -36,4 +36,38 @@ namespace brown::graphics
         mvwaddch(win, y, x, c);
         wattroff(win, COLOR_PAIR(pair));
     }
+
+    void mvwprintvcolors(WINDOW *win, int y, int x, bool color, std::vector<std::string> spr)
+    {
+        int j;
+        for (int i = 0; i < spr.size(); i++)
+        {
+            j = 0;
+            for (auto c : spr[i])
+            {
+                int id = 0;
+                if (color)
+                {
+                    if (c == '#')
+                        id = 5;
+                    else if (c == '%')
+                        id = 4;
+                    else if (c == ' ' || c == '.')
+                        id = 6;
+                    else if (c == 'x')
+                        id = 3;
+                }
+                mvwaddchcolors(win, i + 1 + y, j + 1 + x, id, c != '.' ? c : ' ');
+                j++;
+            }
+        }
+    }
+
+    void start_curses_flags(WINDOW *win)
+    {
+        keypad(win, TRUE);
+        cbreak();
+        nodelay(win, TRUE);
+        wrefresh(win);
+    }
 }

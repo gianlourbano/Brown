@@ -6,10 +6,16 @@
 #include "core/ECS/systems/animation_system.hpp"
 #include "core/ECS/systems/render_system.hpp"
 #include "core/ECS/components/player.hpp"
+#include "core/ECS/components/sprite.hpp"
 #include "core/ECS/systems/player_system.hpp"
+
+#include "debug/debug_state.hpp"
 
 int frame_passed = 0;
 static int FPS = 60;
+
+std::vector<std::string> sprite_1;
+std::vector<std::string> room_1;
 
 namespace brown
 {
@@ -18,29 +24,16 @@ namespace brown
     public:
         void init(engine *game)
         {
-            set_win(brown::graphics::create_newwin(LINES - 4, COLS - 3, 2, 2));
-            keypad(win, TRUE);
-            cbreak();
-            nodelay(win, TRUE);
-            wrefresh(win);
+            set_win(brown::graphics::create_newwin(LINES - 2, COLS - 2, 2, 2));
+            brown::graphics::start_curses_flags(win);
             game->set_current_screen(win);
-
-            std::ifstream room_("./src/room1.txt");
-
-            std::string line;
-
-            while (std::getline(room_, line))
-            {
-                room.push_back(line);
-            }
-
-            room_.close();
 
             brain.init();
 
             brain.register_component<animation>();
             brain.register_component<transform>();
             brain.register_component<player>();
+            brain.register_component<sprite>();
             animation_system = brain.register_system<brown::animation_system>();
             {
                 signature signature;
@@ -60,16 +53,25 @@ namespace brown
             {
                 signature signature;
                 signature.set(brain.get_component_type<animation>());
+                signature.set(brain.get_component_type<sprite>());
                 signature.set(brain.get_component_type<transform>());
                 brain.set_system_signature<brown::animation_system>(signature);
             }
+            render_system->init();
+
+            room = brain.create_entity();
+            m_entities.push_back(room);
+            brain.add_component<transform>(room, {0, 0});
+            brain.add_component<sprite>(room, {{71, 17}, 0});
 
             pl = brain.create_entity();
             m_entities.push_back(pl);
 
             brain.add_component<transform>(pl, {4, 4});
             brain.add_component<player>(pl, {});
-            brain.add_component<animation>(pl, {3, true, 0, true, 20,{'@', '#', 'L'}});
+            // brain.add_component<animation>(pl, {3, false, 0, true, 20,{'@', '#', 'L'}});
+
+            brain.add_component<sprite>(pl, {{2, 2}, 1});
         };
 
         void cleanup(){};
@@ -78,7 +80,7 @@ namespace brown
 
         void handle_events(engine *game)
         {
-            char ch = wgetch(win);
+            int ch = wgetch(win);
             if (ch != ERR)
             {
                 switch (ch)
@@ -93,9 +95,12 @@ namespace brown
                 case 'j':
                     animation_system->stop(m_entities[0], &brain);
                     break;
+                case KEY_F(1):
+                    game->push_state(brown::debug::debug_state::instance());
+                    break;
                 }
             }
-            
+
             player_system->handle_player_events(ch, win, &brain);
         };
 
@@ -103,7 +108,7 @@ namespace brown
         {
             frame_passed++;
             animation_system->update(&brain, frame_passed);
-            if(frame_passed > FPS)
+            if (frame_passed > FPS)
                 frame_passed = 0;
         };
 
@@ -111,24 +116,6 @@ namespace brown
         {
             werase(win);
             box(win, 0, 0);
-
-            // int j;
-            // for (int i = 0; i < room.size(); i++)
-            // {
-            //     j = 0;
-            //     for (auto c : room[i])
-            //     {
-            //         int id;
-            //         if (c == '#')
-            //             id = 5;
-            //         else if (c == '%')
-            //             id = 4;
-            //         else if (c == ' ' || c == '.')
-            //             id = 6;
-            //         brown::graphics::mvwaddchcolors(win, i + 1, j + 1, id, c);
-            //         j++;
-            //     }
-            // }
 
             render_system->draw(win, &brain);
         };
@@ -144,13 +131,13 @@ namespace brown
     private:
         static state_1 m_state_1;
         std::vector<entity> m_entities;
-        std::vector<std::string> room;
 
         std::shared_ptr<brown::animation_system> animation_system;
         std::shared_ptr<brown::render_system> render_system;
         std::shared_ptr<brown::player_system> player_system;
 
         entity pl;
+        entity room;
     };
 }
 

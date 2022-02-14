@@ -1,8 +1,10 @@
+#include "sprite.hpp"
+
 struct animation {
-    int clips;
+    int clips = 0;
     bool playing;
     int current = 0;
     bool cyclic;
     int time_step;
-    char animation_clips[5];
+    std::vector<sprite> animation_clips;
 };
