@@ -20,7 +20,7 @@ void brown::render_system::init()
         if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, ".."))
         {
             std::string name(ent->d_name);
-            if (name.find(".spr"))
+            if (name.find(".spr") || name.find(".aspr"))
                 GLOBAL_SPRITES_paths.push_back(name);
         }
     }
@@ -28,8 +28,15 @@ void brown::render_system::init()
 
     for (auto &spr : GLOBAL_SPRITES_paths)
     {
-        sprite_data m_data = brown::load_sprite(spr);
-        GLOBAL_SPRITES.insert({spr.substr(0, spr.find(".spr")), m_data});
+        if (spr.find(".spr"))
+        {
+            sprite_data m_data = brown::load_sprite(spr);
+            GLOBAL_SPRITES.insert({spr.substr(0, spr.find(".spr")), m_data});
+        }
+        else if (spr.find(".aspr"))
+        {
+
+        }
     }
 }
 
@@ -46,6 +53,12 @@ void brown::render_system::draw(WINDOW *win, brown::brain *br)
         // else
         graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, true, GLOBAL_SPRITES[spr.sprite_name]);
     }
+}
+
+void brown::load_animated_sprite(std::string name) {
+    std::string path = "./sprites/";
+    std::ifstream asprite_(path.append(name));
+    n
 }
 
 sprite_data brown::load_sprite(std::string name)
