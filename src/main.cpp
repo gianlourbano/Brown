@@ -14,9 +14,6 @@
 int frame_passed = 0;
 static int FPS = 60;
 
-std::vector<std::string> sprite_1;
-std::vector<std::string> room_1;
-
 namespace brown
 {
     class state_1 : public state
@@ -61,17 +58,16 @@ namespace brown
 
             room = brain.create_entity();
             m_entities.push_back(room);
-            brain.add_component<transform>(room, {0, 0});
-            brain.add_component<sprite>(room, {{71, 17}, 0});
+            brain.add_component<transform>(room, {{0, 0}, 0});
+            brain.add_component<sprite>(room, {{71, 17}, "room1"});
 
             pl = brain.create_entity();
             m_entities.push_back(pl);
 
-            brain.add_component<transform>(pl, {4, 4});
+            brain.add_component<transform>(pl, {{4, 4}, 1});
             brain.add_component<player>(pl, {});
-            // brain.add_component<animation>(pl, {3, false, 0, true, 20,{'@', '#', 'L'}});
 
-            brain.add_component<sprite>(pl, {{2, 2}, 1});
+            brain.add_component<sprite>(pl, {{2, 2}, "sprite2"});
         };
 
         void cleanup(){};

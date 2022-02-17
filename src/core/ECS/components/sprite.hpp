@@ -8,5 +8,5 @@ using sprite_data = std::vector<std::string>;
 struct sprite
 {
     vec2 size;
-    int id;
+    std::string sprite_name;
 };

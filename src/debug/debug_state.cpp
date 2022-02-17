@@ -3,7 +3,7 @@
 #include <ncurses.h>
 
 extern std::vector<std::string> GLOBAL_SPRITES_paths;
-extern std::vector<std::vector<std::string>> GLOBAL_SPRITES;
+extern std::unordered_map<std::string, std::vector<std::string>> GLOBAL_SPRITES;
 
 namespace brown::debug
 {

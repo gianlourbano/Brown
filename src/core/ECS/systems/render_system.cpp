@@ -5,9 +5,10 @@
 #include "../../../graphics/window/window.hpp"
 #include <dirent.h>
 #include <cstring>
+#include <unordered_map>
 
 sprite_data GLOBAL_SPRITES_paths{};
-std::vector<sprite_data> GLOBAL_SPRITES{};
+std::unordered_map<std::string, sprite_data> GLOBAL_SPRITES{};
 
 void brown::render_system::init()
 {
@@ -28,7 +29,7 @@ void brown::render_system::init()
     for (auto &spr : GLOBAL_SPRITES_paths)
     {
         sprite_data m_data = brown::load_sprite(spr);
-        GLOBAL_SPRITES.push_back(m_data);
+        GLOBAL_SPRITES.insert({spr.substr(0, spr.find(".spr")), m_data});
     }
 }
 
@@ -43,7 +44,7 @@ void brown::render_system::draw(WINDOW *win, brown::brain *br)
         // if (anim.clips != 0 && anim.playing)
         //     graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, 0, anim.animation_clips[anim.current].sprite);
         // else
-        graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, true, GLOBAL_SPRITES[spr.id]);
+        graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, true, GLOBAL_SPRITES[spr.sprite_name]);
     }
 }
 

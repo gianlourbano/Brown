@@ -4,4 +4,4 @@
 struct rigid_body {
     vec2 velocity;
     //collider collider;
-}
+};
