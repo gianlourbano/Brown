@@ -4,6 +4,6 @@
 struct transform {
     vec2 position;
     vec2 scale;
+    int z_index = 0;
     int direction = 0;
-    int z_index;
 };

@@ -56,18 +56,17 @@ namespace brown
             }
             render_system->init();
 
-            room = brain.create_entity();
-            m_entities.push_back(room);
+            auto room = create_entity("room");
             brain.add_component<transform>(room, {{0, 0}, 0});
             brain.add_component<sprite>(room, {{71, 17}, "room1"});
+            brain.add_component<animation>(room, {3, false, 0, false, 20, {0, 0}, "animated_room"});
 
-            pl = brain.create_entity();
-            m_entities.push_back(pl);
+            auto pl = create_entity("player");
 
             brain.add_component<transform>(pl, {{4, 4}, 1});
             brain.add_component<player>(pl, {});
-
             brain.add_component<sprite>(pl, {{2, 2}, "sprite2"});
+            brain.add_component<animation>(pl, {5, false, 0, false, 10,{2, 2}, "animated1"});
         };
 
         void cleanup(){};
@@ -85,11 +84,14 @@ namespace brown
                     game->quit();
                     break;
                 case 'h':
-                    animation_system->play(m_entities[0], &brain);
+                    animation_system->play(find_entity("player"), &brain);
                     break;
 
                 case 'j':
-                    animation_system->stop(m_entities[0], &brain);
+                    animation_system->stop(find_entity("player"), &brain);
+                    break;
+                case 'u':
+                    animation_system->play(find_entity("room"), &brain);
                     break;
                 case KEY_F(1):
                     game->push_state(brown::debug::debug_state::instance());
@@ -126,14 +128,10 @@ namespace brown
 
     private:
         static state_1 m_state_1;
-        std::vector<entity> m_entities;
 
         std::shared_ptr<brown::animation_system> animation_system;
         std::shared_ptr<brown::render_system> render_system;
         std::shared_ptr<brown::player_system> player_system;
-
-        entity pl;
-        entity room;
     };
 }
 
@@ -151,7 +149,8 @@ public:
 
         brown::colors::init_color_from_rgb(12, 255, 229, 5);
         brown::colors::init_color_from_rgb(13, 255, 251, 5);
-
+        brown::colors::init_color_from_rgb(14, 60, 217, 19);
+        brown::colors::init_color_from_rgb(15, 222, 184, 135);
         init_pair(0, COLOR_WHITE, COLOR_BLACK);
         init_pair(1, COLOR_BLUE, COLOR_BLUE);
         init_pair(2, COLOR_CYAN, COLOR_CYAN);
@@ -162,6 +161,8 @@ public:
         init_pair(7, 12, 12);
         init_pair(8, 13, 13);
         init_pair(9, COLOR_WHITE, 10);
+        init_pair(10, 14, 14);
+        init_pair(11, 15 ,15 );
     }
 };
 

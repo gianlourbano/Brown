@@ -28,14 +28,19 @@ void brown::render_system::init()
 
     for (auto &spr : GLOBAL_SPRITES_paths)
     {
-        if (spr.find(".spr"))
+        if (spr.find(".spr") != std::string::npos)
         {
             sprite_data m_data = brown::load_sprite(spr);
             GLOBAL_SPRITES.insert({spr.substr(0, spr.find(".spr")), m_data});
         }
-        else if (spr.find(".aspr"))
+        else if (spr.find(".aspr") != std::string::npos)
         {
-
+            std::vector<sprite_data> m_data = brown::load_animated_sprite(spr);
+            int j = 0;
+            for(auto& d: m_data) {
+                GLOBAL_SPRITES.insert({spr.substr(0, spr.find(".aspr")).append(std::to_string(j)), d});
+                j++;
+            }
         }
     }
 }
@@ -48,17 +53,34 @@ void brown::render_system::draw(WINDOW *win, brown::brain *br)
         auto &spr = br->get_component<sprite>(entity);
         auto &anim = br->get_component<animation>(entity);
 
-        // if (anim.clips != 0 && anim.playing)
-        //     graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, 0, anim.animation_clips[anim.current].sprite);
-        // else
-        graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, true, GLOBAL_SPRITES[spr.sprite_name]);
+        if (anim.clips != 0 && anim.playing)
+            graphics::mvwprintvcolors(win, trans.position.y-anim.offset.y, trans.position.x-anim.offset.x, true, GLOBAL_SPRITES[anim.name + std::to_string(anim.current)]);
+        else
+            graphics::mvwprintvcolors(win, trans.position.y, trans.position.x, true, GLOBAL_SPRITES[spr.sprite_name]);
     }
 }
 
-void brown::load_animated_sprite(std::string name) {
+std::vector<sprite_data> brown::load_animated_sprite(std::string name)
+{
     std::string path = "./sprites/";
     std::ifstream asprite_(path.append(name));
-    n
+    std::vector<sprite_data> m_data;
+    std::string line1;
+    sprite_data frame;
+    while (std::getline(asprite_, line1))
+    {
+        if (line1 == "=")
+        {
+            m_data.push_back(frame);
+            frame.clear();
+        }
+        else
+        {
+            frame.push_back(line1);
+        }
+    }
+    asprite_.close();
+    return m_data;
 }
 
 sprite_data brown::load_sprite(std::string name)

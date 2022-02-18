@@ -1,4 +1,5 @@
 #include "sprite.hpp"
+#include "../../../math/vec2.hpp"
 
 struct animation {
     int clips = 0;
@@ -6,5 +7,6 @@ struct animation {
     int current = 0;
     bool cyclic;
     int time_step;
-    std::vector<sprite> animation_clips;
+    vec2 offset;
+    std::string name;
 };

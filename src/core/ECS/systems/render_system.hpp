@@ -13,5 +13,5 @@ namespace brown
     };
 
     sprite_data load_sprite(std::string name);
-    void load_animated_sprite(std::string name);
+    std::vector<sprite_data> load_animated_sprite(std::string name);
 }

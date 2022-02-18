@@ -26,13 +26,14 @@ namespace brown
         WINDOW *get_win() { return win; }
         void set_win(WINDOW *win) { this->win = win; }
 
-        entity create_entity();
+        entity create_entity(std::string s);
+        entity find_entity(std::string s);
 
     protected:
         state(){};
         WINDOW *win;
         brown::brain brain;
-        std::vector<entity> m_entities{};
+        std::unordered_map<std::string, entity> m_entities{};
     };
 
 }
