@@ -1,5 +1,9 @@
 #include "debug_state.hpp"
-#include "../brown.hpp"
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include "graphics/window/window.hpp"
+
 #include <ncurses.h>
 
 extern std::vector<std::string> GLOBAL_SPRITES_paths;

@@ -19,20 +19,32 @@ namespace brown
             }
             if (anim.current == anim.clips)
             {
-                if (!anim.cyclic)
+                if (anim.cyclic)
+                {
+                    anim.current = 0;
+                }
+                else if (anim.final)
+                {
                     anim.playing = false;
-                anim.current = 0;
+                    anim.current--;
+                }
+                else
+                {
+                    anim.playing = false;
+                    anim.current = 0;
+                }
             }
         }
     }
 
-    void animation_system::play(entity e, brain *brain)
+    void animation_system::play(entity_id e, brain *brain)
     {
         auto &anim = brain->get_component<animation>(e);
+        anim.current = 0;
         anim.playing = true;
     }
 
-    void animation_system::stop(entity e, brain *brain)
+    void animation_system::stop(entity_id e, brain *brain)
     {
         auto &anim = brain->get_component<animation>(e);
         anim.playing = false;

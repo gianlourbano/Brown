@@ -37,22 +37,22 @@ namespace brown
         };
 
         template <typename T>
-        void add_component(entity entity, T component)
+        void add_component(entity_id entity, T component)
         {
             get_component_array<T>()->insert_data(entity, component);
         }
         template <typename T>
-        void remove_component(entity entity, T component)
+        void remove_component(entity_id entity)
         {
-            get_component_array<T>()->remove_data(entity, component);
+            get_component_array<T>()->remove_data(entity);
         }
         template <typename T>
-        T& get_component(entity entity)
+        T& get_component(entity_id entity)
         {
             return get_component_array<T>()->get_data(entity);
         }
 
-        void entity_destroyed(entity entity)
+        void entity_destroyed(entity_id entity)
         {
             for (auto const &pair : m_component_arrays)
             {

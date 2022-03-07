@@ -7,6 +7,6 @@ namespace brown
     class system
     {
     public:
-        std::set<entity> m_entities;
+        std::set<entity_id> m_entities;
     };
 }

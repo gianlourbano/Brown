@@ -8,7 +8,7 @@ CXX = g++
 ## -MP creates phony targets for headers (deals with deleted headers after
 ##  obj file has been compiled)
 ## -MT specifies the dependency target (path qualified obj file name)
-CXXFLAGS = -std=c++17  -MT $@ -MMD -MP -MF $(@:.o=.d) 
+CXXFLAGS = -std=c++17 -Isrc/  -MT $@ -MMD -MP -MF $(@:.o=.d) 
 LDFLAGS = -lstdc++
 # conditional linker flags based on OS (Linux (tested on Ubuntu, Elementary and void), Darwin = MacOS)
 UNAME := $(shell uname)

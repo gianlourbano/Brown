@@ -10,14 +10,14 @@ namespace brown
     {
     public:
         virtual ~Vcomponent_array() = default;
-        virtual void entity_destroyed(entity entity) = 0;
+        virtual void entity_destroyed(entity_id entity) = 0;
     };
 
     template <typename T>
     class component_array : public Vcomponent_array
     {
     public:
-        void insert_data(entity entity, T component)
+        void insert_data(entity_id entity, T component)
         {
             size_t new_index = m_size;
             m_entity_to_index[entity] = new_index;
@@ -26,7 +26,7 @@ namespace brown
             ++m_size;
         }
 
-        void remove_data(entity entity)
+        void remove_data(entity_id entity)
         {
 
             // Copy element at end into deleted element's place to maintain density
@@ -45,13 +45,13 @@ namespace brown
             --m_size;
         }
 
-        T &get_data(entity entity)
+        T &get_data(entity_id entity)
         {
 
             return m_component_array[m_entity_to_index[entity]];
         }
 
-        void entity_destroyed(entity entity) override
+        void entity_destroyed(entity_id entity) override
         {
             if (m_entity_to_index.find(entity) != m_entity_to_index.end())
             {
@@ -61,8 +61,8 @@ namespace brown
 
     private:
         std::array<T, MAX_ENTITIES> m_component_array{};
-        std::unordered_map<entity, size_t> m_entity_to_index{};
-        std::unordered_map<size_t, entity> m_index_to_entity{};
+        std::unordered_map<entity_id, size_t> m_entity_to_index{};
+        std::unordered_map<size_t, entity_id> m_index_to_entity{};
         size_t m_size{};
     };
 }

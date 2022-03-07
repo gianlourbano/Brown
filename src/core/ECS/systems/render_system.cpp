@@ -9,6 +9,7 @@
 
 sprite_data GLOBAL_SPRITES_paths{};
 std::unordered_map<std::string, sprite_data> GLOBAL_SPRITES{};
+std::string sprites_path = "./sprites/";
 
 void brown::render_system::init()
 {
@@ -36,9 +37,10 @@ void brown::render_system::init()
         else if (spr.find(".aspr") != std::string::npos)
         {
             std::vector<sprite_data> m_data = brown::load_animated_sprite(spr);
+            std::string temp = spr;
             int j = 0;
             for(auto& d: m_data) {
-                GLOBAL_SPRITES.insert({spr.substr(0, spr.find(".aspr")).append(std::to_string(j)), d});
+                GLOBAL_SPRITES.insert({temp.substr(0, temp.find(".aspr")).append(std::to_string(j)), d});
                 j++;
             }
         }
@@ -62,14 +64,13 @@ void brown::render_system::draw(WINDOW *win, brown::brain *br)
 
 std::vector<sprite_data> brown::load_animated_sprite(std::string name)
 {
-    std::string path = "./sprites/";
-    std::ifstream asprite_(path.append(name));
+    std::ifstream asprite_(sprites_path + name);
     std::vector<sprite_data> m_data;
     std::string line1;
     sprite_data frame;
     while (std::getline(asprite_, line1))
     {
-        if (line1 == "=")
+        if (line1.find("frame") != std::string::npos)
         {
             m_data.push_back(frame);
             frame.clear();
@@ -85,8 +86,7 @@ std::vector<sprite_data> brown::load_animated_sprite(std::string name)
 
 sprite_data brown::load_sprite(std::string name)
 {
-    std::string path = "./sprites/";
-    std::ifstream sprite_(path.append(name));
+    std::ifstream sprite_(sprites_path + name);
     sprite_data m_data;
     std::string line1;
 

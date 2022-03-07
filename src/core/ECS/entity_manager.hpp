@@ -11,19 +11,19 @@ namespace brown
     public:
         entity_manager()
         {
-            for (entity entity = 0; entity < MAX_ENTITIES; ++entity)
+            for (entity_id entity = 0; entity < MAX_ENTITIES; ++entity)
                 m_avaliable_entities.push(entity);
         }
 
-        entity create_entity()
+        entity_id create_entity()
         {
-            entity id = m_avaliable_entities.front();
+            entity_id id = m_avaliable_entities.front();
             m_avaliable_entities.pop();
             ++m_entity_count;
             return id;
         }
 
-        void destroy_entity(entity entity)
+        void destroy_entity(entity_id entity)
         {
 
             m_signatures[entity].reset();
@@ -31,20 +31,20 @@ namespace brown
             --m_entity_count;
         }
 
-        void set_signature(entity entity, signature signature)
+        void set_signature(entity_id entity, signature signature)
         {
 
             m_signatures[entity] = signature;
         }
 
-        signature get_signature(entity entity)
+        signature get_signature(entity_id entity)
         {
             return m_signatures[entity];
         }
 
         private:
-            std::queue<entity> m_avaliable_entities{};
+            std::queue<entity_id> m_avaliable_entities{};
             std::array<signature, MAX_ENTITIES> m_signatures{};
-            entity m_entity_count;
+            entity_id m_entity_count;
     };
 }

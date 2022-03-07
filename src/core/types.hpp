@@ -13,8 +13,8 @@ constexpr std::uint32_t operator"" _hash(char const *s, std::size_t count)
     return fnv1a_32(s, count);
 }
 
-using entity = std::uint32_t;
-const entity MAX_ENTITIES = 5000;
+using entity_id = std::uint32_t;
+const entity_id MAX_ENTITIES = 5000;
 using component_type = std::uint8_t;
 const component_type MAX_COMPONENTS = 32;
 using signature = std::bitset<MAX_COMPONENTS>;

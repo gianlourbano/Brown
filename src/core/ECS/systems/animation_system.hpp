@@ -12,8 +12,8 @@ namespace brown
 
         void update(brain* br, int dt);
 
-        void play(entity e, brain *brain);
+        void play(entity_id e, brain *brain);
 
-        void stop(entity e, brain *brain);
+        void stop(entity_id e, brain *brain);
     };
 }

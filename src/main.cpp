@@ -1,15 +1,4 @@
 #include "brown.hpp"
-#include "core/state/state.hpp"
-
-#include "core/ECS/components/animation.hpp"
-#include "core/ECS/components/transform.hpp"
-#include "core/ECS/systems/animation_system.hpp"
-#include "core/ECS/systems/render_system.hpp"
-#include "core/ECS/components/player.hpp"
-#include "core/ECS/components/sprite.hpp"
-#include "core/ECS/systems/player_system.hpp"
-
-#include "debug/debug_state.hpp"
 
 int frame_passed = 0;
 static int FPS = 60;
@@ -31,6 +20,9 @@ namespace brown
             brain.register_component<transform>();
             brain.register_component<player>();
             brain.register_component<sprite>();
+            brain.register_component<rigid_body>();
+            brain.register_component<force>();
+            brain.register_component<native_script>();
             animation_system = brain.register_system<brown::animation_system>();
             {
                 signature signature;
@@ -46,6 +38,13 @@ namespace brown
                 brain.set_system_signature<brown::player_system>(signature);
             }
 
+            scripts_system = brain.register_system<brown::scripts_system>();
+            {
+                signature signature;
+                signature.set(brain.get_component_type<native_script>());
+                brain.set_system_signature<brown::scripts_system>(signature);
+            }
+
             render_system = brain.register_system<brown::render_system>();
             {
                 signature signature;
@@ -56,17 +55,34 @@ namespace brown
             }
             render_system->init();
 
+            physics_system = brain.register_system<brown::physics_system>();
+            {
+                signature signature;
+                signature.set(brain.get_component_type<rigid_body>());
+                signature.set(brain.get_component_type<force>());
+                signature.set(brain.get_component_type<transform>());
+                brain.set_system_signature<brown::physics_system>(signature);
+            }
+
             auto room = create_entity("room");
-            brain.add_component<transform>(room, {{0, 0}, 0});
-            brain.add_component<sprite>(room, {{71, 17}, "room1"});
-            brain.add_component<animation>(room, {3, false, 0, false, 20, {0, 0}, "animated_room"});
+            room.add_component<transform>({{0, 0}, 0});
+            room.add_component<sprite>({{71, 17}, "room1"});
+            room.add_component<animation>({3, false, 0, false, 20, {0, 0}, "animated_room", true});
 
             auto pl = create_entity("player");
 
-            brain.add_component<transform>(pl, {{4, 4}, 1});
-            brain.add_component<player>(pl, {});
-            brain.add_component<sprite>(pl, {{2, 2}, "sprite2"});
-            brain.add_component<animation>(pl, {5, false, 0, false, 10,{2, 2}, "animated1"});
+            class player_controller: public scriptable_entity {
+                void on_update() {
+                    auto &ts = get_component<transform>();
+                    ts.position.x++;
+                }
+            };
+
+            pl.add_component<transform>({{4, 4}, 1});
+            pl.add_component<player>({});
+            pl.add_component<sprite>({{2, 2}, "sprite2"});
+            pl.add_component<animation>({5, false, 0, false, 10, {2, 2}, "animated1"});
+            pl.add_component<native_script>({}).bind<player_controller>();
         };
 
         void cleanup(){};
@@ -84,14 +100,15 @@ namespace brown
                     game->quit();
                     break;
                 case 'h':
-                    animation_system->play(find_entity("player"), &brain);
+                    animation_system->play(find_entity_id("player"), &brain);
                     break;
-
                 case 'j':
-                    animation_system->stop(find_entity("player"), &brain);
+                    animation_system->stop(find_entity_id("player"), &brain);
                     break;
                 case 'u':
-                    animation_system->play(find_entity("room"), &brain);
+                    animation_system->play(find_entity_id("room"), &brain);
+                    break;
+                case 'y':
                     break;
                 case KEY_F(1):
                     game->push_state(brown::debug::debug_state::instance());
@@ -100,6 +117,7 @@ namespace brown
             }
 
             player_system->handle_player_events(ch, win, &brain);
+            physics_system->handle_events(&brain);
         };
 
         void update(engine *game)
@@ -108,11 +126,14 @@ namespace brown
             animation_system->update(&brain, frame_passed);
             if (frame_passed > FPS)
                 frame_passed = 0;
+            physics_system->update(&brain);
+            scripts_system->update(&brain);
         };
 
         void draw(engine *game)
         {
             werase(win);
+            werase(game->get_std_screen());
             box(win, 0, 0);
 
             render_system->draw(win, &brain);
@@ -128,10 +149,11 @@ namespace brown
 
     private:
         static state_1 m_state_1;
-
         std::shared_ptr<brown::animation_system> animation_system;
         std::shared_ptr<brown::render_system> render_system;
         std::shared_ptr<brown::player_system> player_system;
+        std::shared_ptr<brown::physics_system> physics_system;
+        std::shared_ptr<brown::scripts_system> scripts_system;
     };
 }
 
@@ -162,7 +184,7 @@ public:
         init_pair(8, 13, 13);
         init_pair(9, COLOR_WHITE, 10);
         init_pair(10, 14, 14);
-        init_pair(11, 15 ,15 );
+        init_pair(11, 15, 15);
     }
 };
 

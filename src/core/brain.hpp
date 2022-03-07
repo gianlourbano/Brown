@@ -5,6 +5,8 @@
 #include "ECS/system_manager.hpp"
 #include "types.hpp"
 #include <memory>
+#include <unordered_map>
+#include <string>
 
 namespace brown {
     class brain {
@@ -17,11 +19,11 @@ namespace brown {
             }
 
             //entity methods
-            entity create_entity() {
+            entity_id create_entity() {
                 return m_entity_manager->create_entity();
             }
 
-            void destroy_entity(entity entity) {
+            void destroy_entity(entity_id entity) {
                 m_entity_manager->destroy_entity(entity);
                 m_component_manager->entity_destroyed(entity);
                 m_system_manager->entity_destroyed(entity);
@@ -34,7 +36,7 @@ namespace brown {
             }
 
             template<typename T>
-            void add_component(entity entity, T component) {
+            void add_component(entity_id entity, T component) {
                 m_component_manager->add_component<T>(entity, component);
 
                 auto signature = m_entity_manager->get_signature(entity);
@@ -45,7 +47,7 @@ namespace brown {
             }
 
             template<typename T>
-            void remove_component(entity entity) {
+            void remove_component(entity_id entity) {
                 m_component_manager->remove_component<T>(entity);
 
                 auto signature = m_entity_manager->get_signature(entity);
@@ -56,7 +58,7 @@ namespace brown {
             }
 
             template<typename T>
-            T& get_component(entity entity) {
+            T& get_component(entity_id entity) {
                 return m_component_manager->get_component<T>(entity);
             }
 
@@ -89,12 +91,11 @@ namespace brown {
                 m_event_manager->send_event(id);
             }
 
-
-
         private:
             std::unique_ptr<component_manager> m_component_manager;
             std::unique_ptr<entity_manager> m_entity_manager;
             std::unique_ptr<system_manager> m_system_manager;
             std::unique_ptr<event_manager> m_event_manager;
+
     };
 }

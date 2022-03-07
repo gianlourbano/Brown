@@ -23,7 +23,7 @@ namespace brown {
                 m_signatures.insert({type_name, signature});
             }
 
-            void entity_destroyed(entity entity) {
+            void entity_destroyed(entity_id entity) {
                 for (auto const& pair: m_systems) {
                     auto const& system = pair.second;
 
@@ -31,7 +31,7 @@ namespace brown {
                 }
             }
 
-            void entity_signature_changed(entity entity, signature signature) {
+            void entity_signature_changed(entity_id entity, signature signature) {
                 for(auto const& pair: m_systems) {
                     auto const& type = pair.first;
                     auto const& system = pair.second;

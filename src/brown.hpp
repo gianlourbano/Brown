@@ -6,7 +6,7 @@
 #include "debug/debugger.hpp"
 #include "core/color/color.hpp"
 #include "graphics/window/window.hpp"
-
+#include "engine.hpp"
 //////
 #include "core/event/event_manager.hpp"
 #include "core/ECS/entity_manager.hpp"
@@ -14,40 +14,18 @@
 #include "core/ECS/system_manager.hpp"
 #include "core/brain.hpp"
 //////
-
-namespace brown
-{
-    class state;
-
-    class engine
-    {
-    public:
-        void init(int width, int height);
-        void cleanup();
-
-        void change_state(state *state);
-        void push_state(state *state);
-        void pop_state();
-
-        void handle_events();
-        void update();
-        void draw();
-
-        bool running() { return m_running; }
-        void quit();
-
-        WINDOW *get_std_screen() { return stdscreen; }
-        WINDOW *get_current_screen() { return current_screen; }
-        void set_current_screen(WINDOW *win) { current_screen = win; }
-
-    private:
-        // standard screen output
-        WINDOW *stdscreen;
-        WINDOW *current_screen;
-
-        // the stack of states
-    public:
-        std::vector<state *> states;
-        bool m_running;
-    };
-}
+#include "core/state/state.hpp"
+#include "debug/debug_state.hpp"
+//////
+#include "core/ECS/components/animation.hpp"
+#include "core/ECS/components/transform.hpp"
+#include "core/ECS/components/player.hpp"
+#include "core/ECS/components/sprite.hpp"
+#include "core/ECS/components/force.hpp"
+#include "core/ECS/components/rigid_body.hpp"
+#include "core/ECS/components/native_script.hpp"
+#include "core/ECS/systems/scripts_system.hpp"
+#include "core/ECS/systems/animation_system.hpp"
+#include "core/ECS/systems/render_system.hpp"
+#include "core/ECS/systems/player_system.hpp"
+#include "core/ECS/systems/physics_system.hpp"
