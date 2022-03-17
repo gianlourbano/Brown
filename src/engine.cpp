@@ -4,7 +4,6 @@
 
 #include "core/ECS/components/animation.hpp"
 #include "core/ECS/components/sprite.hpp"
-#include "core/ECS/components/player.hpp"
 #include "core/ECS/components/transform.hpp"
 #include "core/ECS/components/force.hpp"
 #include "core/ECS/components/rigid_body.hpp"
@@ -90,7 +89,7 @@ namespace brown
     entity state::create_entity(std::string name)
     {
         entity_id e = brain.create_entity();
-        entity e_ = entity(e, &(this->brain), 0);
+        entity e_ = entity(e, &(this->brain));
         m_entities.insert(std::make_pair(name, e_));
         return e_;
     }
@@ -98,7 +97,7 @@ namespace brown
     entity state::create_entity()
     {
         entity_id e = brain.create_entity();
-        entity e_ = entity(e, &(this->brain), 0);
+        entity e_ = entity(e, &(this->brain));
         m_entities.insert(std::make_pair("entity_" + std::to_string(free_entities++), e_));
         return e_;
     }

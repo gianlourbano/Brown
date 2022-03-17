@@ -10,7 +10,8 @@ namespace brown
 
             if(!script.instance) {
                 script.instance = script.instantiate_script();
-                script.instance->m_entity = entity{e, br, 0};
+                script.instance->m_entity = entity{e, br, brown::Z_1};
+                script.instance->on_create();
 
             }
             script.instance->on_update();

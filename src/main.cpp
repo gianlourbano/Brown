@@ -5,6 +5,11 @@ static int FPS = 60;
 
 namespace brown
 {
+    size_t KEY_PRESSED;
+}
+
+namespace brown
+{
     class state_1 : public state
     {
     public:
@@ -18,7 +23,6 @@ namespace brown
 
             brain.register_component<animation>();
             brain.register_component<transform>();
-            brain.register_component<player>();
             brain.register_component<sprite>();
             brain.register_component<rigid_body>();
             brain.register_component<force>();
@@ -28,14 +32,6 @@ namespace brown
                 signature signature;
                 signature.set(brain.get_component_type<animation>());
                 brain.set_system_signature<brown::animation_system>(signature);
-            }
-
-            player_system = brain.register_system<brown::player_system>();
-            {
-                signature signature;
-                signature.set(brain.get_component_type<transform>());
-                signature.set(brain.get_component_type<player>());
-                brain.set_system_signature<brown::player_system>(signature);
             }
 
             scripts_system = brain.register_system<brown::scripts_system>();
@@ -71,15 +67,37 @@ namespace brown
 
             auto pl = create_entity("player");
 
-            class player_controller: public scriptable_entity {
-                void on_update() {
-                    auto &ts = get_component<transform>();
-                    ts.position.x++;
+            class player_controller : public scriptable_entity
+            {
+            public:
+                void on_create()
+                {
+                    health = 100;
+                    ts = &get_component<transform>();
                 }
+
+                void on_update()
+                {
+                    if (brown::KEY_PRESSED == 'a')
+                        ts->position.x--;
+                    else if (brown::KEY_PRESSED == 'd')
+                        ts->position.x++;
+
+                    if (brown::KEY_PRESSED == 'w')
+                        ts->position.y--;
+                    else if (brown::KEY_PRESSED == 's')
+                        ts->position.y++;
+                    
+                    if (brown::KEY_PRESSED == 't')
+                        m_entity.delete_entity();
+                }
+
+            private:
+                transform *ts = nullptr;
+                int health;
             };
 
             pl.add_component<transform>({{4, 4}, 1});
-            pl.add_component<player>({});
             pl.add_component<sprite>({{2, 2}, "sprite2"});
             pl.add_component<animation>({5, false, 0, false, 10, {2, 2}, "animated1"});
             pl.add_component<native_script>({}).bind<player_controller>();
@@ -91,10 +109,10 @@ namespace brown
 
         void handle_events(engine *game)
         {
-            int ch = wgetch(win);
-            if (ch != ERR)
+            brown::KEY_PRESSED = wgetch(win);
+            if (brown::KEY_PRESSED != ERR)
             {
-                switch (ch)
+                switch (brown::KEY_PRESSED)
                 {
                 case 'p':
                     game->quit();
@@ -116,7 +134,6 @@ namespace brown
                 }
             }
 
-            player_system->handle_player_events(ch, win, &brain);
             physics_system->handle_events(&brain);
         };
 
@@ -151,7 +168,6 @@ namespace brown
         static state_1 m_state_1;
         std::shared_ptr<brown::animation_system> animation_system;
         std::shared_ptr<brown::render_system> render_system;
-        std::shared_ptr<brown::player_system> player_system;
         std::shared_ptr<brown::physics_system> physics_system;
         std::shared_ptr<brown::scripts_system> scripts_system;
     };

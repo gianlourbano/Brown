@@ -19,7 +19,6 @@
 //////
 #include "core/ECS/components/animation.hpp"
 #include "core/ECS/components/transform.hpp"
-#include "core/ECS/components/player.hpp"
 #include "core/ECS/components/sprite.hpp"
 #include "core/ECS/components/force.hpp"
 #include "core/ECS/components/rigid_body.hpp"
@@ -27,5 +26,4 @@
 #include "core/ECS/systems/scripts_system.hpp"
 #include "core/ECS/systems/animation_system.hpp"
 #include "core/ECS/systems/render_system.hpp"
-#include "core/ECS/systems/player_system.hpp"
 #include "core/ECS/systems/physics_system.hpp"
